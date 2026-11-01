@@ -13,7 +13,6 @@ const Checkout = () => {
     postalCode: "",
     country: "",
   });
-  const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -29,7 +28,7 @@ const Checkout = () => {
     try {
       const { data } = await api.post("/orders", {
         shippingAddress: form,
-        paymentMethod,
+        paymentMethod: "Cash on Delivery",
       });
       await refreshCart();
       navigate(`/orders/${data._id}`);
@@ -91,15 +90,10 @@ const Checkout = () => {
             required
             className="w-full border border-sand rounded-md px-4 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-moss"
           />
-          <select
-            value={paymentMethod}
-            onChange={(e) => setPaymentMethod(e.target.value)}
-            className="w-full border border-sand rounded-md px-4 py-2 bg-white"
-          >
-            <option>Cash on Delivery</option>
-            <option>Credit Card</option>
-            <option>PayPal</option>
-          </select>
+          <p className="text-sm text-ink/60">
+            Payment: Cash on Delivery. This is a demo store, so no real payment is taken and
+            nothing will be shipped.
+          </p>
 
           {error && <p className="text-clay text-sm">{error}</p>}
 

@@ -1,11 +1,17 @@
 const dotenv = require("dotenv");
+dotenv.config();
+
 const connectDB = require("../config/db");
 const User = require("../models/User");
 const Product = require("../models/Product");
 const Order = require("../models/Order");
 
-dotenv.config();
-connectDB();
+// npm run seed             -> adds the sample data, but only if the database is empty
+// npm run seed -- --reset  -> wipes users, products and orders first, then seeds
+// npm run seed -- --destroy -> wipes everything and stops
+const args = process.argv.slice(2);
+const reset = args.includes("--reset");
+const destroy = args.includes("--destroy");
 
 const products = [
   {
@@ -58,53 +64,61 @@ const products = [
   },
 ];
 
-const importData = async () => {
-  try {
-    await Order.deleteMany();
-    await Product.deleteMany();
-    await User.deleteMany();
-
-    await User.create({
-      name: "Admin User",
-      email: "admin@example.com",
-      password: "admin123",
-      role: "admin",
-    });
-
-    await User.create({
-      name: "Test Customer",
-      email: "customer@example.com",
-      password: "customer123",
-      role: "customer",
-    });
-
-    await Product.insertMany(products);
-
-    console.log("Data imported successfully!");
-    console.log("Admin login: admin@example.com / admin123");
-    console.log("Customer login: customer@example.com / customer123");
-    process.exit();
-  } catch (error) {
-    console.error(`Error: ${error.message}`);
-    process.exit(1);
-  }
+const wipe = async () => {
+  await Order.deleteMany();
+  await Product.deleteMany();
+  await User.deleteMany();
 };
 
-const destroyData = async () => {
-  try {
-    await Order.deleteMany();
-    await Product.deleteMany();
-    await User.deleteMany();
-    console.log("Data destroyed!");
-    process.exit();
-  } catch (error) {
-    console.error(`Error: ${error.message}`);
+const run = async () => {
+  const adminEmail = process.env.SEED_ADMIN_EMAIL;
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD;
+  if (!destroy && (!adminEmail || !adminPassword)) {
+    console.error("Set SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD in your .env before seeding.");
     process.exit(1);
   }
+
+  await connectDB();
+
+  if (destroy) {
+    await wipe();
+    console.log("Data destroyed.");
+    return;
+  }
+
+  const existing = (await User.countDocuments()) + (await Product.countDocuments());
+  if (existing > 0 && !reset) {
+    console.log("This database already has data, so I left it alone.");
+    console.log("Run `npm run seed -- --reset` if you really want to wipe it and start over.");
+    return;
+  }
+
+  if (reset) await wipe();
+
+  await User.create({
+    name: "Admin User",
+    email: adminEmail,
+    password: adminPassword,
+    role: "admin",
+  });
+
+  await User.create({
+    name: "Test Customer",
+    email: "customer@example.com",
+    password: "customer123",
+    role: "customer",
+  });
+
+  await Product.insertMany(products);
+
+  console.log("Data imported.");
+  console.log(`Admin login: ${adminEmail}`);
+  console.log("Customer login: customer@example.com / customer123");
 };
 
-if (process.argv[2] === "-d") {
-  destroyData();
-} else {
-  importData();
-}
+run()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error(`Error: ${error.message}`);
+    process.exit(1);
+  });

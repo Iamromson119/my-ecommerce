@@ -6,8 +6,29 @@ const Home = () => {
   const [products, setProducts] = useState([]);
   const [keyword, setKeyword] = useState("");
   const [category, setCategory] = useState("");
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [slow, setSlow] = useState(false);
   const [error, setError] = useState("");
+
+  // load the category list once, so the dropdown keeps all options while filtering
+  useEffect(() => {
+    api
+      .get("/products/categories")
+      .then(({ data }) => setCategories(data))
+      .catch(() => {});
+  }, []);
+
+  // the free hosting plan puts the server to sleep when nobody's using it,
+  // so the first request can take a while. Tell people instead of leaving a blank page
+  useEffect(() => {
+    if (!loading) {
+      setSlow(false);
+      return;
+    }
+    const timer = setTimeout(() => setSlow(true), 4000);
+    return () => clearTimeout(timer);
+  }, [loading]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -20,7 +41,7 @@ const Home = () => {
         const { data } = await api.get("/products", { params });
         setProducts(data.products);
       } catch (err) {
-        setError("Could not load products. Is the backend running?");
+        setError("Could not load products. Please try again in a moment.");
       } finally {
         setLoading(false);
       }
@@ -28,8 +49,6 @@ const Home = () => {
     const timeout = setTimeout(fetchProducts, 300);
     return () => clearTimeout(timeout);
   }, [keyword, category]);
-
-  const categories = [...new Set(products.map((p) => p.category))];
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
@@ -64,7 +83,15 @@ const Home = () => {
 
       {error && <p className="text-clay">{error}</p>}
       {loading ? (
-        <p className="text-ink/50">Loading products&hellip;</p>
+        <div className="text-ink/50">
+          <p>Loading products&hellip;</p>
+          {slow && (
+            <p className="mt-2 text-sm">
+              The server is waking up (it sleeps when idle on the free plan). This can take up
+              to a minute the first time.
+            </p>
+          )}
+        </div>
       ) : products.length === 0 ? (
         <p className="text-ink/50">No products found.</p>
       ) : (

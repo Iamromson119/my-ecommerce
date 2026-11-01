@@ -1,6 +1,12 @@
 const User = require("../models/User");
 const Product = require("../models/Product");
 
+// returns a whole number > 0, or null if the value isn't usable
+const toQty = (value) => {
+  const qty = Number(value);
+  return Number.isInteger(qty) && qty > 0 ? qty : null;
+};
+
 // @desc Get current user's cart
 // @route GET /api/cart
 const getCart = async (req, res, next) => {
@@ -16,7 +22,13 @@ const getCart = async (req, res, next) => {
 // @route POST /api/cart
 const addToCart = async (req, res, next) => {
   try {
-    const { productId, qty = 1 } = req.body;
+    const { productId } = req.body;
+    const qty = toQty(req.body.qty ?? 1);
+    if (!qty) {
+      res.status(400);
+      throw new Error("Quantity must be a whole number, 1 or more");
+    }
+
     const product = await Product.findById(productId);
     if (!product) {
       res.status(404);
@@ -26,10 +38,16 @@ const addToCart = async (req, res, next) => {
     const user = await User.findById(req.user._id);
     const existing = user.cart.find((item) => item.product.toString() === productId);
 
+    const alreadyInCart = existing ? existing.qty : 0;
+    if (alreadyInCart + qty > product.stock) {
+      res.status(400);
+      throw new Error(`Only ${product.stock} of ${product.name} in stock`);
+    }
+
     if (existing) {
-      existing.qty += Number(qty);
+      existing.qty += qty;
     } else {
-      user.cart.push({ product: productId, qty: Number(qty) });
+      user.cart.push({ product: productId, qty });
     }
 
     await user.save();
@@ -44,7 +62,12 @@ const addToCart = async (req, res, next) => {
 // @route PUT /api/cart/:productId
 const updateCartItem = async (req, res, next) => {
   try {
-    const { qty } = req.body;
+    const qty = Number(req.body.qty);
+    if (!Number.isInteger(qty)) {
+      res.status(400);
+      throw new Error("Quantity must be a whole number");
+    }
+
     const user = await User.findById(req.user._id);
     const item = user.cart.find((i) => i.product.toString() === req.params.productId);
 

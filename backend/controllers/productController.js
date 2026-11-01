@@ -1,5 +1,8 @@
 const Product = require("../models/Product");
 
+// the keyword goes into a regex, so escape anything that has a special meaning there
+const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 // @desc Get all products (supports ?keyword=&category=&page=&limit=)
 // @route GET /api/products
 const getProducts = async (req, res, next) => {
@@ -8,7 +11,7 @@ const getProducts = async (req, res, next) => {
     const page = Number(req.query.page) || 1;
 
     const keyword = req.query.keyword
-      ? { name: { $regex: req.query.keyword, $options: "i" } }
+      ? { name: { $regex: escapeRegex(String(req.query.keyword)), $options: "i" } }
       : {};
     const category = req.query.category ? { category: req.query.category } : {};
 
@@ -21,6 +24,17 @@ const getProducts = async (req, res, next) => {
       .sort({ createdAt: -1 });
 
     res.json({ products, page, pages: Math.ceil(count / pageSize), total: count });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc Get the list of categories
+// @route GET /api/products/categories
+const getCategories = async (req, res, next) => {
+  try {
+    const categories = await Product.distinct("category");
+    res.json(categories.sort());
   } catch (error) {
     next(error);
   }
@@ -96,6 +110,7 @@ const deleteProduct = async (req, res, next) => {
 
 module.exports = {
   getProducts,
+  getCategories,
   getProductById,
   createProduct,
   updateProduct,

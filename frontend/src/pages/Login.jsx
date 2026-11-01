@@ -62,7 +62,7 @@ const Login = () => {
         </Link>
       </p>
       <p className="mt-4 text-xs text-ink/40">
-        Demo admin: admin@example.com / admin123 &middot; Demo customer: customer@example.com / customer123
+        Want to look around? Demo customer: customer@example.com / customer123
       </p>
     </div>
   );
