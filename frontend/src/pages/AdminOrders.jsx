@@ -33,7 +33,7 @@ const AdminOrders = () => {
       <div className="overflow-x-auto">
         <table className="w-full text-sm border-collapse">
           <thead>
-            <tr className="text-left text-ink/50 border-b border-sand">
+            <tr className="text-left text-ink/60 border-b border-sand">
               <th className="py-2 pr-4">Order</th>
               <th className="py-2 pr-4">Customer</th>
               <th className="py-2 pr-4">Date</th>
@@ -65,7 +65,7 @@ const AdminOrders = () => {
             ))}
           </tbody>
         </table>
-        {orders.length === 0 && <p className="text-ink/50 mt-4">No orders yet.</p>}
+        {orders.length === 0 && <p className="text-ink/60 mt-4">No orders yet.</p>}
       </div>
     </div>
   );

@@ -20,12 +20,12 @@ const OrderDetail = () => {
   }, [id]);
 
   if (error) return <p className="max-w-4xl mx-auto px-6 py-10 text-clay">{error}</p>;
-  if (!order) return <p className="max-w-4xl mx-auto px-6 py-10 text-ink/50">Loading&hellip;</p>;
+  if (!order) return <p className="max-w-4xl mx-auto px-6 py-10 text-ink/60">Loading&hellip;</p>;
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-10">
       <h1 className="font-display text-3xl mb-2">Order #{order._id.slice(-8)}</h1>
-      <p className="text-ink/50 mb-8 capitalize">Status: {order.status}</p>
+      <p className="text-ink/60 mb-8 capitalize">Status: {order.status}</p>
 
       <div className="grid md:grid-cols-2 gap-8">
         <div>
@@ -36,7 +36,7 @@ const OrderDetail = () => {
                 <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded-md bg-sand" />
                 <div className="flex-1">
                   <p className="font-medium">{item.name}</p>
-                  <p className="text-sm text-ink/50">
+                  <p className="text-sm text-ink/60">
                     {item.qty} &times; ${item.price.toFixed(2)}
                   </p>
                 </div>
@@ -54,7 +54,7 @@ const OrderDetail = () => {
               {order.shippingAddress.city}, {order.shippingAddress.postalCode}
             </p>
             <p>{order.shippingAddress.country}</p>
-            <p className="pt-2 text-ink/50">Payment: {order.paymentMethod}</p>
+            <p className="pt-2 text-ink/60">Payment: {order.paymentMethod}</p>
           </div>
 
           <h2 className="font-display text-xl mt-6 mb-3">Total</h2>

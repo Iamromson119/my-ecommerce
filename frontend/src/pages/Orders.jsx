@@ -23,7 +23,7 @@ const Orders = () => {
     fetchOrders();
   }, []);
 
-  if (loading) return <p className="max-w-4xl mx-auto px-6 py-10 text-ink/50">Loading&hellip;</p>;
+  if (loading) return <p className="max-w-4xl mx-auto px-6 py-10 text-ink/60">Loading&hellip;</p>;
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-10">
@@ -45,7 +45,7 @@ const Orders = () => {
             >
               <div>
                 <p className="font-medium">Order #{order._id.slice(-8)}</p>
-                <p className="text-sm text-ink/50">
+                <p className="text-sm text-ink/60">
                   {new Date(order.createdAt).toLocaleDateString()} &middot; {order.items.length} item(s)
                 </p>
               </div>

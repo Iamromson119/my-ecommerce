@@ -37,12 +37,12 @@ const AdminDashboard = () => {
       </div>
 
       {!stats ? (
-        <p className="text-ink/50">Loading&hellip;</p>
+        <p className="text-ink/60">Loading&hellip;</p>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {cards.map((c) => (
             <div key={c.label} className="border border-sand rounded-lg p-6 bg-white">
-              <p className="text-sm text-ink/50">{c.label}</p>
+              <p className="text-sm text-ink/60">{c.label}</p>
               <p className="font-display text-3xl mt-2">{c.value}</p>
             </div>
           ))}

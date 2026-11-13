@@ -157,7 +157,7 @@ const AdminProducts = () => {
               <img src={p.image} alt={p.name} className="w-12 h-12 object-cover rounded-md bg-sand" />
               <div className="flex-1">
                 <p className="font-medium text-sm">{p.name}</p>
-                <p className="text-xs text-ink/50">
+                <p className="text-xs text-ink/60">
                   ${p.price.toFixed(2)} &middot; {p.stock} in stock
                 </p>
               </div>

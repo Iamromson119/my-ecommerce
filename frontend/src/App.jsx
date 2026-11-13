@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
@@ -21,6 +22,7 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
+      <Toaster position="top-right" toastOptions={{ duration: 2500 }} />
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<Home />} />
