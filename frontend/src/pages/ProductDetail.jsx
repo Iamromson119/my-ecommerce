@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
+import { formatPrice } from "../utils/format";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -77,7 +78,7 @@ const ProductDetail = () => {
         <div>
           <p className="text-xs uppercase tracking-wide text-ink/60">{product.category}</p>
           <h1 className="font-display text-3xl mt-1">{product.name}</h1>
-          <p className="mt-4 text-2xl font-medium text-clay">${product.price.toFixed(2)}</p>
+          <p className="mt-4 text-2xl font-medium text-clay">{formatPrice(product.price)}</p>
           <p className="mt-4 text-ink/70 leading-relaxed">{product.description}</p>
 
           <p
@@ -125,7 +126,7 @@ const ProductDetail = () => {
 
           <ul className="mt-8 space-y-3 border-t border-sand pt-6 text-sm text-ink/70">
             <li className="flex items-center gap-3">
-              <Truck size={18} className="text-moss" /> Free shipping on orders over $100
+              <Truck size={18} className="text-moss" /> Free shipping on orders over ₹100
             </li>
             <li className="flex items-center gap-3">
               <PackageCheck size={18} className="text-moss" /> Track the status of your order

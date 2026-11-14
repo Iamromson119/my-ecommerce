@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, Truck } from "lucide-react";
 import toast from "react-hot-toast";
 import { useCart } from "../context/CartContext";
+import { formatPrice } from "../utils/format";
 
 // same rule the server uses when the order is placed
 const FREE_SHIPPING_FROM = 100;
@@ -76,7 +77,7 @@ const Cart = () => {
                   >
                     {item.product.name}
                   </Link>
-                  <p className="text-sm text-ink/60">${item.product.price.toFixed(2)} each</p>
+                  <p className="text-sm text-ink/60">{formatPrice(item.product.price)} each</p>
 
                   <div className="mt-2 inline-flex items-center border border-sand rounded-md">
                     <button
@@ -100,7 +101,7 @@ const Cart = () => {
                 </div>
 
                 <p className="font-medium w-20 text-right">
-                  ${(item.product.price * item.qty).toFixed(2)}
+                  {formatPrice(item.product.price * item.qty)}
                 </p>
                 <button
                   onClick={() => remove(item.product._id)}
@@ -121,22 +122,22 @@ const Cart = () => {
           <dl className="space-y-2 text-sm">
             <div className="flex justify-between">
               <dt className="text-ink/70">Subtotal</dt>
-              <dd>${subtotal.toFixed(2)}</dd>
+              <dd>{formatPrice(subtotal)}</dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-ink/70">Shipping</dt>
-              <dd>{shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}</dd>
+              <dd>{shipping === 0 ? "Free" : formatPrice(shipping)}</dd>
             </div>
             <div className="flex justify-between border-t border-sand pt-3 mt-3 text-base font-medium">
               <dt>Total</dt>
-              <dd>${total.toFixed(2)}</dd>
+              <dd>{formatPrice(total)}</dd>
             </div>
           </dl>
 
           {shipping > 0 && (
             <p className="mt-4 flex items-start gap-2 text-sm text-moss">
               <Truck size={16} className="mt-0.5 shrink-0" />
-              Add ${Math.max(remaining, 0.01).toFixed(2)} more for free shipping.
+              Add {formatPrice(Math.max(remaining, 0.01))} more for free shipping.
             </p>
           )}
 

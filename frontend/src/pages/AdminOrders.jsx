@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/axios";
+import { formatPrice } from "../utils/format";
 
 const statuses = ["pending", "processing", "shipped", "delivered", "cancelled"];
 
@@ -47,7 +48,7 @@ const AdminOrders = () => {
                 <td className="py-3 pr-4">#{order._id.slice(-8)}</td>
                 <td className="py-3 pr-4">{order.user?.name || "Unknown"}</td>
                 <td className="py-3 pr-4">{new Date(order.createdAt).toLocaleDateString()}</td>
-                <td className="py-3 pr-4">${order.totalPrice.toFixed(2)}</td>
+                <td className="py-3 pr-4">{formatPrice(order.totalPrice)}</td>
                 <td className="py-3 pr-4">
                   <select
                     value={order.status}

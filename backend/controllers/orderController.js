@@ -2,8 +2,7 @@ const Order = require("../models/Order");
 const User = require("../models/User");
 const Product = require("../models/Product");
 
-// only cash on delivery for now, there's no real payment gateway hooked up
-const PAYMENT_METHODS = ["Cash on Delivery"];
+const PAYMENT_METHODS = ["Cash on Delivery", "Razorpay"];
 
 const round2 = (n) => Math.round(n * 100) / 100;
 
@@ -125,4 +124,41 @@ const getOrderById = async (req, res, next) => {
   }
 };
 
-module.exports = { createOrder, getMyOrders, getOrderById };
+// @desc Cancel an unpaid order that hasn't been processed yet, and put the stock back
+// @route PUT /api/orders/:id/cancel
+const cancelOrder = async (req, res, next) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order || order.user.toString() !== req.user._id.toString()) {
+      res.status(404);
+      throw new Error("Order not found");
+    }
+    if (order.isPaid || order.status !== "pending") {
+      res.status(400);
+      throw new Error("This order can't be cancelled any more");
+    }
+
+    // flip the status first, so a double click can't give the stock back twice
+    const claimed = await Order.findOneAndUpdate(
+      { _id: order._id, status: "pending", isPaid: false },
+      { status: "cancelled" },
+      { new: true }
+    );
+    if (!claimed) {
+      res.status(400);
+      throw new Error("This order can't be cancelled any more");
+    }
+
+    await Promise.all(
+      order.items.map((item) =>
+        Product.updateOne({ _id: item.product }, { $inc: { stock: item.qty } })
+      )
+    );
+
+    res.json(claimed);
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { createOrder, getMyOrders, getOrderById, cancelOrder };

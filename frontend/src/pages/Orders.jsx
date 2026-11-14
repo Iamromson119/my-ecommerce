@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/axios";
+import { formatPrice } from "../utils/format";
 
 const statusColor = {
   pending: "bg-sand text-ink",
@@ -53,7 +54,7 @@ const Orders = () => {
                 <span className={`text-xs px-3 py-1 rounded-full capitalize ${statusColor[order.status]}`}>
                   {order.status}
                 </span>
-                <span className="font-medium">${order.totalPrice.toFixed(2)}</span>
+                <span className="font-medium">{formatPrice(order.totalPrice)}</span>
               </div>
             </Link>
           ))}

@@ -3,6 +3,7 @@ import { ShoppingCart } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
+import { formatPrice } from "../utils/format";
 
 const ProductCard = ({ product }) => {
   const { user } = useAuth();
@@ -65,7 +66,7 @@ const ProductCard = ({ product }) => {
       <div className="p-4">
         <p className="text-xs uppercase tracking-wide text-ink/60">{product.category}</p>
         <h3 className="font-display text-lg mt-1">{product.name}</h3>
-        <p className="mt-2 font-medium text-clay">${product.price.toFixed(2)}</p>
+        <p className="mt-2 font-medium text-clay">{formatPrice(product.price)}</p>
       </div>
     </Link>
   );

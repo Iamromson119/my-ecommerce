@@ -17,7 +17,7 @@ import ProductCard from "../components/ProductCard.jsx";
 import ProductSkeleton from "../components/ProductSkeleton.jsx";
 
 const perks = [
-  { icon: Truck, title: "Free shipping", text: "On orders over $100" },
+  { icon: Truck, title: "Free shipping", text: "On orders over ₹100" },
   { icon: PackageCheck, title: "Order tracking", text: "See the status of every order" },
   { icon: ShieldCheck, title: "Protected account", text: "Your details stay safe" },
 ];

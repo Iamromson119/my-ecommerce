@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/axios";
+import { formatPrice } from "../utils/format";
 
 const emptyForm = { name: "", description: "", price: "", image: "", category: "", stock: "" };
 
@@ -158,7 +159,7 @@ const AdminProducts = () => {
               <div className="flex-1">
                 <p className="font-medium text-sm">{p.name}</p>
                 <p className="text-xs text-ink/60">
-                  ${p.price.toFixed(2)} &middot; {p.stock} in stock
+                  {formatPrice(p.price)} &middot; {p.stock} in stock
                 </p>
               </div>
               <button onClick={() => handleEdit(p)} className="text-moss text-sm hover:underline">

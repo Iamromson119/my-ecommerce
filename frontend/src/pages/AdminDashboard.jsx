@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/axios";
+import { formatPrice } from "../utils/format";
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
@@ -15,7 +16,7 @@ const AdminDashboard = () => {
 
   const cards = stats
     ? [
-        { label: "Total revenue", value: `$${stats.totalRevenue.toFixed(2)}` },
+        { label: "Total revenue", value: formatPrice(stats.totalRevenue) },
         { label: "Total orders", value: stats.totalOrders },
         { label: "Total products", value: stats.totalProducts },
         { label: "Total users", value: stats.totalUsers },
