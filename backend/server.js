@@ -48,6 +48,7 @@ const authLimiter = rateLimit({
 });
 
 app.get("/api/health", (req, res) => res.json({ status: "ok" }));
+app.get("/api/sitemap.xml", require("./controllers/seoController").getSitemap);
 
 app.use("/api/auth", authLimiter, require("./routes/authRoutes"));
 app.use("/api/products", require("./routes/productRoutes"));

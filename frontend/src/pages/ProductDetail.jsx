@@ -6,6 +6,9 @@ import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { formatPrice } from "../utils/format";
+import { slugify, shorten } from "../utils/slugify";
+import { SITE_URL } from "../config";
+import Seo from "../components/Seo.jsx";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -41,7 +44,14 @@ const ProductDetail = () => {
     }
   };
 
-  if (error) return <p className="max-w-6xl mx-auto px-6 py-10 text-clay">{error}</p>;
+  if (error) {
+    return (
+      <>
+        <Seo title="Product not found | Meridian" noindex />
+        <p className="max-w-6xl mx-auto px-6 py-10 text-clay">{error}</p>
+      </>
+    );
+  }
 
   if (!product) {
     return (
@@ -60,19 +70,67 @@ const ProductDetail = () => {
   const maxQty = Math.min(product.stock, 10);
   const soldOut = product.stock === 0;
 
+  const pageUrl = `${SITE_URL}/products/${product._id}`;
+  const categoryUrl = `${SITE_URL}/category/${slugify(product.category)}`;
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: product.name,
+      image: [product.image],
+      description: product.description,
+      category: product.category,
+      sku: product._id,
+      offers: {
+        "@type": "Offer",
+        url: pageUrl,
+        priceCurrency: "INR",
+        price: product.price.toFixed(2),
+        availability: soldOut ? "https://schema.org/OutOfStock" : "https://schema.org/InStock",
+        itemCondition: "https://schema.org/NewCondition",
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Shop", item: `${SITE_URL}/` },
+        { "@type": "ListItem", position: 2, name: product.category, item: categoryUrl },
+        { "@type": "ListItem", position: 3, name: product.name, item: pageUrl },
+      ],
+    },
+  ];
+
   return (
     <div className="max-w-6xl mx-auto px-6 py-8">
+      <Seo
+        title={`${product.name} | Meridian`}
+        description={shorten(product.description)}
+        path={`/products/${product._id}`}
+        image={product.image}
+        type="product"
+        jsonLd={jsonLd}
+      />
+
       <nav className="flex items-center gap-1 text-sm text-ink/60 mb-6" aria-label="Breadcrumb">
         <Link to="/" className="hover:text-moss">Shop</Link>
         <ChevronRight size={14} />
-        <span>{product.category}</span>
+        <Link to={`/category/${slugify(product.category)}`} className="hover:text-moss">
+          {product.category}
+        </Link>
         <ChevronRight size={14} />
         <span className="text-ink">{product.name}</span>
       </nav>
 
       <div className="grid md:grid-cols-2 gap-10">
         <div className="aspect-square rounded-xl overflow-hidden bg-sand border border-sand">
-          <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+          <img
+            src={product.image}
+            alt={product.name}
+            fetchPriority="high"
+            decoding="async"
+            className="w-full h-full object-cover"
+          />
         </div>
 
         <div>

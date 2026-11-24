@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import AdminRoute from "./components/AdminRoute.jsx";
+import Seo from "./components/Seo.jsx";
 
 import Home from "./pages/Home.jsx";
 import ProductDetail from "./pages/ProductDetail.jsx";
@@ -18,6 +19,14 @@ import AdminProducts from "./pages/AdminProducts.jsx";
 import AdminOrders from "./pages/AdminOrders.jsx";
 import NotFound from "./pages/NotFound.jsx";
 
+// pages that shouldn't show up in search results: accounts, cart, admin, 404
+const Private = ({ title, children }) => (
+  <>
+    <Seo title={`${title} | Meridian`} noindex />
+    {children}
+  </>
+);
+
 function App() {
   return (
     <div className="min-h-screen flex flex-col">
@@ -27,23 +36,24 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/products/:id" element={<ProductDetail />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/category/:slug" element={<Home />} />
+          <Route path="/login" element={<Private title="Log in"><Login /></Private>} />
+          <Route path="/register" element={<Private title="Create an account"><Register /></Private>} />
 
           <Route element={<ProtectedRoute />}>
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/orders" element={<Orders />} />
-            <Route path="/orders/:id" element={<OrderDetail />} />
+            <Route path="/cart" element={<Private title="Your cart"><Cart /></Private>} />
+            <Route path="/checkout" element={<Private title="Checkout"><Checkout /></Private>} />
+            <Route path="/orders" element={<Private title="Your orders"><Orders /></Private>} />
+            <Route path="/orders/:id" element={<Private title="Order details"><OrderDetail /></Private>} />
           </Route>
 
           <Route element={<AdminRoute />}>
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/products" element={<AdminProducts />} />
-            <Route path="/admin/orders" element={<AdminOrders />} />
+            <Route path="/admin" element={<Private title="Admin dashboard"><AdminDashboard /></Private>} />
+            <Route path="/admin/products" element={<Private title="Manage products"><AdminProducts /></Private>} />
+            <Route path="/admin/orders" element={<Private title="Manage orders"><AdminOrders /></Private>} />
           </Route>
 
-          <Route path="*" element={<NotFound />} />
+          <Route path="*" element={<Private title="Page not found"><NotFound /></Private>} />
         </Routes>
       </main>
       <Footer />

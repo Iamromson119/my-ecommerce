@@ -1,3 +1,6 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [
+    { "source": "/sitemap.xml", "destination": "https://meridian-738y.onrender.com/api/sitemap.xml" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }

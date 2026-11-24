@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://my-ecommerce-nine-psi.vercel.app/sitemap.xml
